@@ -1,6 +1,6 @@
 # xz backdoor re-creation and scripts
 
-This is an attempt to re-create the xz backdoor (and make helper scripts) to understand how it works, no more, no less.
+This is an attempt to re-create the xz backdoor aka CVE-2024-3094 (and make helper scripts) to understand how it works, no more, no less.
 
 Requires xz-utils in $PWD/xz-5.6.1 (http://ftp.de.debian.org/debian/pool/main/x/xz-utils/xz-utils_5.6.1.orig.tar.xz)
 
