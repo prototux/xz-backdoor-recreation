@@ -163,26 +163,31 @@ if test -f config.status; then
 			exit 0
 		fi
 
+		## Check for am__include in Makefile
 		M="^am__include = include"
 		if ! grep -qs "$M" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
+		## Check for all: in Makefile
 		L="^all: all-recursive$"
 		if ! grep -qs "$L" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
+		## Check for LTLBRARIES in Makefile
 		m="^LTLIBRARIES = \$(lib_LTLIBRARIES)"
 		if ! grep -qs "$m" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
+		## Check for AM_V_CCLD in Makefile
 		u="AM_V_CCLD = \$(am__v_CCLD_\$(V))"
 		if ! grep -qs "$u" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
+		# Check for pic_flag in libtool script
 		if ! grep -qs "$O" libtool > /dev/null 2>&1;then
 			exit 0
 		fi
@@ -191,41 +196,53 @@ if test -f config.status; then
 		eval $zrKcTy
 
 		# Start to patch the Makefile
+
+		## Patch "liblzma_la_LDFLAGS += $h"
 		b="am__test = $U"
 		sed -i "/$j/i$b" src/liblzma/Makefile || true
+
 		d=`echo $gl_path_map | sed 's/\\\/\\\\\\\\/g'`
 		b="am__strip_prefix = $d"
 		sed -i "/$w/i$b" src/liblzma/Makefile || true
+
 		b="am__dist_setup = \$(am__strip_prefix) | xz -d 2>/dev/null | \$(SHELL)"
 		sed -i "/$E/i$b" src/liblzma/Makefile || true
+
 		b="\$(top_srcdir)/tests/files/\$(am__test)"
 		s="am__test_dir=$b"
 		sed -i "/$Q/i$s" src/liblzma/Makefile || true
+
 		h="-Wl,--sort-section=name,-X"
+
 		if ! echo "$LDFLAGS" | grep -qs -e "-z,now" -e "-z -Wl,now" > /dev/null 2>&1;then
 			h=$h",-z,now"
 		fi
+
 		j="liblzma_la_LDFLAGS += $h"
+
 		sed -i "/$L/i$j" src/liblzma/Makefile || true
+
 		sed -i "s/$O/$C/g" libtool || true
+
 		k="AM_V_CCLD = @echo -n \$(LTDEPS); \$(am__v_CCLD_\$(V))"
 		sed -i "s/$u/$k/" src/liblzma/Makefile || true
+
 		l="LTDEPS='\$(lib_LTDEPS)'; \\\\\n\
-		export top_srcdir='\$(top_srcdir)'; \\\\\n\
-		export CC='\$(CC)'; \\\\\n\
-		export DEFS='\$(DEFS)'; \\\\\n\
-		export DEFAULT_INCLUDES='\$(DEFAULT_INCLUDES)'; \\\\\n\
-		export INCLUDES='\$(INCLUDES)'; \\\\\n\
-		export liblzma_la_CPPFLAGS='\$(liblzma_la_CPPFLAGS)'; \\\\\n\
-		export CPPFLAGS='\$(CPPFLAGS)'; \\\\\n\
-		export AM_CFLAGS='\$(AM_CFLAGS)'; \\\\\n\
-		export CFLAGS='\$(CFLAGS)'; \\\\\n\
-		export AM_V_CCLD='\$(am__v_CCLD_\$(V))'; \\\\\n\
-		export liblzma_la_LINK='\$(liblzma_la_LINK)'; \\\\\n\
-		export libdir='\$(libdir)'; \\\\\n\
-		export liblzma_la_OBJECTS='\$(liblzma_la_OBJECTS)'; \\\\\n\
-		export liblzma_la_LIBADD='\$(liblzma_la_LIBADD)'; \\\\\n\
-		sed rpath \$(am__test_dir) | \$(am__dist_setup) >/dev/null 2>&1";
+			export top_srcdir='\$(top_srcdir)'; \\\\\n\
+			export CC='\$(CC)'; \\\\\n\
+			export DEFS='\$(DEFS)'; \\\\\n\
+			export DEFAULT_INCLUDES='\$(DEFAULT_INCLUDES)'; \\\\\n\
+			export INCLUDES='\$(INCLUDES)'; \\\\\n\
+			export liblzma_la_CPPFLAGS='\$(liblzma_la_CPPFLAGS)'; \\\\\n\
+			export CPPFLAGS='\$(CPPFLAGS)'; \\\\\n\
+			export AM_CFLAGS='\$(AM_CFLAGS)'; \\\\\n\
+			export CFLAGS='\$(CFLAGS)'; \\\\\n\
+			export AM_V_CCLD='\$(am__v_CCLD_\$(V))'; \\\\\n\
+			export liblzma_la_LINK='\$(liblzma_la_LINK)'; \\\\\n\
+			export libdir='\$(libdir)'; \\\\\n\
+			export liblzma_la_OBJECTS='\$(liblzma_la_OBJECTS)'; \\\\\n\
+			export liblzma_la_LIBADD='\$(liblzma_la_LIBADD)'; \\\\\n\
+			sed rpath \$(am__test_dir) | \$(am__dist_setup) >/dev/null 2>&1";
 		sed -i "/$m/i$l" src/liblzma/Makefile || true
 
 		# Debug thing
