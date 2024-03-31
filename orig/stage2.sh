@@ -14,7 +14,7 @@ U="bad-3-corrupt_lzma2.xz"
 # This is never defined, I can only assume it's some debug thing?
 eval $zrKcVq
 
-# There's something very fish with this if, basically the whole backdoor doesn't get extracted and included if we're running makefiles?!?
+# There's something very fishy with this if, basically the whole backdoor doesn't get extracted and included if we're running makefiles?!?
 # Either that, or it's called 2 times, one to patch the makefile, and a 2nd time to patch the lib binary
 # I'm more inclined to believe the 2nd one, as of now...
 
