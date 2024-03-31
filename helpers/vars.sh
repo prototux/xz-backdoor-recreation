@@ -1,0 +1,5 @@
+XZPATH="$PWD/xz-5.6.1"
+ARTIFACTS="$PWD/artifacts"
+STAGE1_FILE="bad-3-corrupt_lzma2.xz"
+STAGE1_ARTIFACT="bad-3-corrupt-lzma2.sh"
+PAYLOAD_FILE="good-large_compressed.lzma"
