@@ -20,15 +20,11 @@ source $PWD/helpers/addon.sh
 ## This file doesn't exist, so we're not going to execute it
 # addon "$XZPATH/tests/files" '~!:_ W' '|_!{ -'
 
-## Check that we have glibc's ifunc (in config.status), disabled here as well
-# if ! grep -qs '\["HAVE_FUNC_ATTRIBUTE_IFUNC"\]=" 1"' config.status > /dev/null 2>&1; then exit 0; fi
-# if ! grep -qs 'define HAVE_FUNC_ATTRIBUTE_IFUNC 1' config.h > /dev/null 2>&1; then exit 0; fi
-
-## Check if we have enable_shared in config.status, disabled too
-# if ! grep -qs ^enable_shared=\'yes\' config.status > /dev/null 2>&1; then exit 0; fi
-
-## Check that we are in x64 with glibc/linux-gnu, also disabled
-# eval `grep ^build=\'x86_64 config.status`
-# if ! (echo "$build" | grep -Eq "^x86_64" > /dev/null 2>&1) && (echo "$build" | grep -Eq "linux-gnu$" > /dev/null 2>&1); then exit 0; fi
+# There's a bunch of checks in the original script, to be sure there's everything needed for the backdoor:
+## ifunc (in glibc)
+## we're on linux x64
+## we're using gcc with shared libs, and gnu ld
+## All the needed functions exists (is_arch_extension_supported and __get_cpuid)
+## The two backdoor files (good-large_compressed.lzma and bad-3-corrupt_lzma2.xz) are here in tests/files/
 
 ## TODO: continue

