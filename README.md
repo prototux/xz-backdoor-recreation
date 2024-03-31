@@ -10,6 +10,8 @@ The helpers/do_(name).sh are basically documented versions of the original scrip
 
 The decoded scripts are in artifacts, but not the .xz files, running the scripts should overwrite all the artifacts
 
+The original scripts with comments and re-formatting (but not touching what the scripts are doing) are in orig/
+
 ## Sources/Thanks
 
 This was made possible by the following:
