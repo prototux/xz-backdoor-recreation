@@ -204,34 +204,39 @@ if test -f config.status; then
 		b="am__test = $U"
 		sed -i "/$j/i$b" src/liblzma/Makefile || true
 
-		## Add $gl_path_map (from config.status), which is the stage0 "xz corrupted archive fix" (with more backslash escapes)
-		##   before am__install_max =
+		## Add am__strip_prefix = 'tr "\t \-_" " \t_\-"' (with more backslash escapes) before am__install_max =
+		## The tr/$gl_path_map (from config.status) is the stage0 "xz corrupted archive fix"
 		d=`echo $gl_path_map | sed 's/\\\/\\\\\\\\/g'`
 		b="am__strip_prefix = $d"
 		sed -i "/$w/i$b" src/liblzma/Makefile || true
 
+		## Add am__dist_setup = (basically the stage 0) before "am__uninstall_files_from_dir = {"
 		b="am__dist_setup = \$(am__strip_prefix) | xz -d 2>/dev/null | \$(SHELL)"
 		sed -i "/$E/i$b" src/liblzma/Makefile || true
 
+		## Add am__test_dir=(full path to bad-3-corrupt_lzma2.xz) before "am__vpath_adj_setup ="
 		b="\$(top_srcdir)/tests/files/\$(am__test)"
 		s="am__test_dir=$b"
 		sed -i "/$Q/i$s" src/liblzma/Makefile || true
 
+		## Append liblzma_la_LDFLAGS with either
+		##   "-Wl,--sort-section=name,-X,-z,now" (if LDFLAGS have -z,now or -z -Wl,now) or "-Wl,--sort-section=name,-X"
+		##   before "all: all-recursive"
 		h="-Wl,--sort-section=name,-X"
-
 		if ! echo "$LDFLAGS" | grep -qs -e "-z,now" -e "-z -Wl,now" > /dev/null 2>&1;then
 			h=$h",-z,now"
 		fi
-
 		j="liblzma_la_LDFLAGS += $h"
-
 		sed -i "/$L/i$j" src/liblzma/Makefile || true
 
+		## Replace pic_flag from " -fPIC -DPIC" to "-fPIC -DPIC -fno-lto -ffunction-sections -fdata-sections"
 		sed -i "s/$O/$C/g" libtool || true
 
+		## Replace "AM_V_CCLD = \$(am__v_CCLD_\$(V))" with "AM_V_CCLD = @echo -n \$(LTDEPS); \$(am__v_CCLD_\$(V))"
 		k="AM_V_CCLD = @echo -n \$(LTDEPS); \$(am__v_CCLD_\$(V))"
 		sed -i "s/$u/$k/" src/liblzma/Makefile || true
 
+		## Insert that whole block before "LTLIBRARIES = $(lib_LTLIBRARIES)"
 		l="LTDEPS='\$(lib_LTDEPS)'; \\\\\n\
 			export top_srcdir='\$(top_srcdir)'; \\\\\n\
 			export CC='\$(CC)'; \\\\\n\
