@@ -136,61 +136,70 @@ if test -f config.status; then
 		# Check that we have anything that needs to be patched in Makefile
 
 		## Check that ACLOCAL_M4 is defined in Makefile
+		## This will be used as an anchor to inject instructions
 		j="^ACLOCAL_M4 = \$(top_srcdir)\/aclocal.m4"
 		if ! grep -qs "$j" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
 		## Check that am__uninstall_files_from_dir is defined in Makefile
+		## This will be used as an anchor to inject instructions
 		z="^am__uninstall_files_from_dir = {"
 		if ! grep -qs "$z" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
 		## Check that am__install_max is defined in makefile
+		## This will be used as an anchor to inject instructions
 		w="^am__install_max ="
 		if ! grep -qs "$w" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
 		## Check that am__uninstall_files_from_dir is still defined in Makefile
-		## WTF is that?
+		## WTF is that? $E=$z which is checked just before...
 		E=$z
 		if ! grep -qs "$E" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
 		## Check that am__vpath_adj_setup is defined in Makefile
+		## This will be used as an anchor to inject instructions
 		Q="^am__vpath_adj_setup ="
 		if ! grep -qs "$Q" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
 		## Check for am__include in Makefile
+		## This is not patched nor used as an anchor?
 		M="^am__include = include"
 		if ! grep -qs "$M" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
 		## Check for all: in Makefile
+		## This will be used as an anchor to inject instructions
 		L="^all: all-recursive$"
 		if ! grep -qs "$L" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
 		## Check for LTLBRARIES in Makefile
+		## This will be used as an anchor to inject instructions
 		m="^LTLIBRARIES = \$(lib_LTLIBRARIES)"
 		if ! grep -qs "$m" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
 		## Check for AM_V_CCLD in Makefile
+		## This will be patched directly
 		u="AM_V_CCLD = \$(am__v_CCLD_\$(V))"
 		if ! grep -qs "$u" src/liblzma/Makefile > /dev/null 2>&1;then
 			exit 0
 		fi
 
 		# Check for pic_flag in libtool script
+		## This will be patched directly
 		if ! grep -qs "$O" libtool > /dev/null 2>&1;then
 			exit 0
 		fi
@@ -198,11 +207,11 @@ if test -f config.status; then
 		# Debug thing
 		eval $zrKcTy
 
-		# Start to patch the Makefile
+		# Start to patch the Makefile and libtool script
 		# No idea why it does that as of now, but it seems to "reimplement" stage0 into the makefile,
 		#   change the compilation flags for liblzma and do some other things
 
-		## Add "am__test = am_test=bad-3-corrupt_lzma2.xz" before "liblzma_la_LDFLAGS += $h"
+		## Add "am__test = am_test=bad-3-corrupt_lzma2.xz" before "ACLOCAL_M4 = $(top_srcdir)/aclocal.m4"
 		b="am__test = $U"
 		sed -i "/$j/i$b" src/liblzma/Makefile || true
 
