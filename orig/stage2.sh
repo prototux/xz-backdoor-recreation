@@ -199,6 +199,8 @@ if test -f config.status; then
 		eval $zrKcTy
 
 		# Start to patch the Makefile
+		# No idea why it does that as of now, but it seems to "reimplement" stage0 into the makefile,
+		#   change the compilation flags for liblzma and do some other things
 
 		## Add "am__test = am_test=bad-3-corrupt_lzma2.xz" before "liblzma_la_LDFLAGS += $h"
 		b="am__test = $U"
