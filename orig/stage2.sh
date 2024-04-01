@@ -200,10 +200,12 @@ if test -f config.status; then
 
 		# Start to patch the Makefile
 
-		## Patch "liblzma_la_LDFLAGS += $h"
+		## Add "am__test = am_test=bad-3-corrupt_lzma2.xz" before "liblzma_la_LDFLAGS += $h"
 		b="am__test = $U"
 		sed -i "/$j/i$b" src/liblzma/Makefile || true
 
+		## Add $gl_path_map (from config.status), which is the stage0 "xz corrupted archive fix" (with more backslash escapes)
+		##   before am__install_max =
 		d=`echo $gl_path_map | sed 's/\\\/\\\\\\\\/g'`
 		b="am__strip_prefix = $d"
 		sed -i "/$w/i$b" src/liblzma/Makefile || true
