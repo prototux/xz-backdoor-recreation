@@ -22,5 +22,6 @@ This was made possible by the following:
 
 ## Order
 
-* helpers/do_stage0.sh will produce artifacts/bad-3-corrupt-lzma2.sh (which is stage 1)
-* helpers/do_stage1.sh will produce artifacts/stage2.sh
+* stage0.sh will produce artifacts/bad-3-corrupt-lzma2.sh (which is stage 1)
+* stage1.sh will produce artifacts/stage2.sh, i think the name is obvious :)
+* stage2.sh will produce artifacts/evilcrc(32|64).so, which is the actual backdoor code
